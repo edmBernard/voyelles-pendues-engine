@@ -4,7 +4,7 @@
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
-KoTH-snake depend on:
+The project depends on:
 - [fmt](https://fmt.dev/latest/index.html): A modern formatting library
 
 ```
