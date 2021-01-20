@@ -46,9 +46,9 @@ LINK_DIRECTORIES(
 #**************************************************************************************************
 # Make configuration
 #**************************************************************************************************
-# add_executable(boo ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-# target_compile_options(boo PRIVATE -O3)
-# target_link_libraries(boo -pthread -lstdc++fs)
+add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
+target_compile_options(devTool PRIVATE -O3)
+target_link_libraries(devTool -pthread -lstdc++fs)
 
 #**************************************************************************************************
 # Test configuration

@@ -1,29 +1,18 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQmlContext>
 
-#include "enigneinterface.h"
+#include "engine.h"
+#include <iostream>
 
-int main(int argc, char *argv[])
-{
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
+int main(int argc, char *argv[]) try {
 
-    QGuiApplication app(argc, argv);
+  using namespace vowels;
 
-    QQmlApplicationEngine appEngine;
+  Engine engine;
 
-    EnigneInterface* gameBackend = new EnigneInterface(&appEngine);
-    appEngine.rootContext()->setContextProperty("Engine", gameBackend);
+  for (int i = 0; i < engine.getWordsToFindLength(); ++i) {
+    std::cout << "words: " << engine.getWordComplete(i) << " " << engine.getWordSqueezed(i) << " " << engine.getWordWildcard(i) << std::endl;
+  }
+  return EXIT_SUCCESS;
 
-    const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
-    QObject::connect(&appEngine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
-    appEngine.load(url);
-
-    return app.exec();
+} catch (const std::exception &e) {
+  std::cerr << "Exception: " << e.what() << std::endl;
 }
