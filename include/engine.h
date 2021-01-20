@@ -17,23 +17,23 @@ class Engine {
 public:
   Engine(std::string filename = "datas/valid_word.txt");
 
-  uint64_t getWordListLength() const { return m_wordList.size(); };
+  uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
-  const std::string &getWordComplete(uint64_t index) const { return m_wordList[index]; }
-  const std::string &getWordSqueezed(uint64_t index) const { return m_wordListSqueezed[index]; }
-  const std::string &getWordWildcard(uint64_t index) const { return m_wordListWithWildcard[index]; }
+  const std::string &getWordComplete(uint64_t index) const { return m_wordsList[m_wordsToFind[index]]; }
+  const std::string &getWordSqueezed(uint64_t index) const { return m_wordsListSqueezed[m_wordsToFind[index]]; }
+  const std::string &getWordWildcard(uint64_t index) const { return m_wordsListWithWildcard[m_wordsToFind[index]]; }
 
   void newPuzzle();
   void createGrid();
-  const std::vector<std::string> &getGrid() const;
+  const std::vector<std::string> &getGrid() const { return m_grid; };
 
 private:
-  std::vector<std::string> m_wordList;             //!< List of all valid words used
-  std::vector<std::string> m_wordListSqueezed;     //!< List of all words without vowels
-  std::vector<std::string> m_wordListWithWildcard; //!< List of all words with vowels replaced by *
-  std::vector<std::string> m_grid;                 // List of letter to form the keyboard grid
+  std::vector<std::string> m_wordsList;             //!< List of all valid words used
+  std::vector<std::string> m_wordsListSqueezed;     //!< List of all words without vowels
+  std::vector<std::string> m_wordsListWithWildcard; //!< List of all words with vowels replaced by *
 
-  std::vector<uint64_t> m_wordsInternalIndex;
+  std::vector<std::string> m_grid;     //!< List of letter to form the keyboard grid
+  std::vector<uint64_t> m_wordsToFind; //!< List of index of the word to find in the grid
 };
 
 } // namespace vowels

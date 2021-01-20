@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+
 namespace vowels {
 
 namespace details {
@@ -35,16 +36,19 @@ Engine::Engine(std::string filename) {
 
   std::string line;
   while (infile >> line) {
-    m_wordList.push_back(line);
+    m_wordsList.push_back(line);
     auto [wordSqueezd, wordWildCard] = details::removeVowels(line);
-    m_wordListSqueezed.push_back(wordSqueezd);
-    m_wordListWithWildcard.push_back(wordWildCard);
+    m_wordsListSqueezed.push_back(wordSqueezd);
+    m_wordsListWithWildcard.push_back(wordWildCard);
   }
 
   newPuzzle();
 };
 
 void Engine::newPuzzle() {
+  for (int i = 0; i < m_wordsList.size(); ++i) {
+    m_wordsToFind.push_back(i);
+  }
 }
 
 } // namespace vowels
