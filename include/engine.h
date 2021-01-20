@@ -1,17 +1,16 @@
-#ifndef ENGINE_H
-#define ENGINE_H
-
 #pragma once
 
 #include <string>
-#include <vector>
 #include <string_view>
 #include <tuple>
+#include <vector>
 
-namespace vp {
+namespace vowels {
 
 namespace details {
-  std::tuple<std::string, std::string> removeVowels(std::string word) {
+
+std::tuple<std::string, std::string> removeVowels(std::string word);
+
 }
 
 class Engine {
@@ -37,5 +36,4 @@ private:
   std::vector<std::string> m_wordListWithWildcard;
 };
 
-} // namespace vp
-#endif // ENGINE_H
+} // namespace vowels

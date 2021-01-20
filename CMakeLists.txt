@@ -24,14 +24,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Set variable
 #**************************************************************************************************
 set(SOURCES
-  engine.cpp
+  src/engine.cpp
 )
 
 #**************************************************************************************************
 # Set compiler
 #**************************************************************************************************
-add_compile_options(-std=c++17 -Wall) # for all targets in current directory
-
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  add_compile_options(/std:c++latest /Oy)
+else()
+  add_compile_options(-std=c++2a -fPIC -O3 -fno-omit-frame-pointer)
+endif()
 
 #**************************************************************************************************
 # Linker
@@ -43,9 +46,9 @@ LINK_DIRECTORIES(
 #**************************************************************************************************
 # Make configuration
 #**************************************************************************************************
-add_executable(boo ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-target_compile_options(boo PRIVATE -O3)
-target_link_libraries(boo -pthread -lstdc++fs)
+# add_executable(boo ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+# target_compile_options(boo PRIVATE -O3)
+# target_link_libraries(boo -pthread -lstdc++fs)
 
 #**************************************************************************************************
 # Test configuration
@@ -55,9 +58,9 @@ if(BUILD_UNIT_TESTS)
   enable_testing()
   SET(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-engine.cpp
   )
   add_executable(unit_test ${TEST_SOURCES} ${SOURCES})
-  target_compile_options(unit_test PRIVATE -O0)
   target_link_libraries(unit_test -pthread -lstdc++fs)
   add_test(NAME "unit_test_default"
     COMMAND unit_test

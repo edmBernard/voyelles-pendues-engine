@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace vp {
+namespace vowels {
 
 namespace details {
 
@@ -36,7 +36,7 @@ Engine::Engine(std::string filename) {
   std::string line;
   while (infile >> line) {
     m_wordList.push_back(line);
-    auto [wordVowels, wordWildCard] = details::removeVowels(line)
+    auto [wordVowels, wordWildCard] = details::removeVowels(line);
     m_wordListWithoutVowels.push_back(wordVowels);
     m_wordListWithWildcard.push_back(wordWildCard);
   }
@@ -52,4 +52,4 @@ Engine::Engine(std::vector<std::string> &&wordList)
 void Engine::newPuzzle() {
 }
 
-} // namespace vp
+} // namespace vowels
