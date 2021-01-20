@@ -16,7 +16,7 @@ def main():
         for line in infile:
             word = line.rstrip()
 
-            if getLengthWithoutVowels(word) >= 3:
+            if getLengthWithoutVowels(word) >= 3 and getLengthWithoutVowels(word) <= 5:
                 all_valid_words.append(word)
 
     with open("valid_word_without_vowels.txt", "w") as outfile_without_vowels:
