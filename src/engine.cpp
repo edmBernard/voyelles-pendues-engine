@@ -28,7 +28,7 @@ std::tuple<std::string, std::string> removeVowels(std::string word) {
 }
 } // namespace details
 
-Engine::Engine(std::string filename) {
+Engine::Engine(int gridSize, std::string filename) : m_gridSize(gridSize) {
   std::ifstream infile(filename);
   if (!infile.is_open()) {
     throw std::runtime_error("File Not Found : " + filename);

@@ -15,7 +15,7 @@ std::tuple<std::string, std::string> removeVowels(std::string word);
 
 class Engine {
 public:
-  Engine(std::string filename = "datas/valid_word.txt");
+  Engine(int gridSize = 5, std::string filename = "datas/valid_word.txt");
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
@@ -33,6 +33,7 @@ private:
   std::vector<std::string> m_wordsListWithWildcard; //!< List of all words with vowels replaced by *
 
   std::vector<std::string> m_grid;     //!< List of letter to form the keyboard grid
+  int m_gridSize;                      //!< Size of the keyboard grid
   std::vector<uint64_t> m_wordsToFind; //!< List of index of the word to find in the grid
 };
 

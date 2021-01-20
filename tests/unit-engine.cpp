@@ -9,7 +9,7 @@ using namespace vowels;
 
 TEST_CASE("Engine Contructor", "[engine]") {
 
-  Engine engine("test_valid_words.txt");
+  Engine engine(5, "test_valid_words.txt");
 
   CHECK(engine.getWordsToFindLength() == 25);
   CHECK(engine.getWordSqueezed(2) == "bssbls");
