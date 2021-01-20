@@ -62,8 +62,9 @@ if(BUILD_UNIT_TESTS)
   )
   add_executable(unit_test ${TEST_SOURCES} ${SOURCES})
   target_link_libraries(unit_test -pthread -lstdc++fs)
-  add_test(NAME "unit_test_default"
+  add_custom_target(tests
     COMMAND unit_test
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/datas
   )
+
 endif()

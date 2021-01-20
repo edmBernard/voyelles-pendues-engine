@@ -16,7 +16,7 @@ std::tuple<std::string, std::string> removeVowels(std::string word) {
       if (c == consonnant) {
         wordVowels += consonnant;
         wordWildCard += consonnant;
-        continue;
+        break;
       }
       if (consonnant == 'z') {
         wordWildCard += "*";

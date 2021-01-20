@@ -9,9 +9,9 @@ using namespace vowels;
 
 TEST_CASE("Engine Contructor", "[engine]") {
 
-  Engine engine("../tests/datas/test_valid_word.txt");
+  Engine engine("test_valid_words.txt");
 
-  CHECK(engine.getWordListLength() == 18);
-  CHECK(engine.getWordComplete(3) == "abaissables");
-  CHECK(engine.getWordWildcard(3) == "*b**ss*bl*s");
+  CHECK(engine.getWordListLength() == 25);
+  CHECK(engine.getWordComplete(2) == "abaissables");
+  CHECK(engine.getWordWildcard(2) == "*b**ss*bl*s");
 }
