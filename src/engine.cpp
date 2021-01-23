@@ -1,4 +1,7 @@
 #include "engine.h"
+
+#include <spdlog/spdlog.h>
+
 #include <algorithm>
 #include <assert.h>
 #include <filesystem>
@@ -80,6 +83,7 @@ int getMaxWordSize(int direction, int i, int j, int gridSize) {
 
 Engine::Engine(int gridSize, std::string filename)
     : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard) {
+
   std::ifstream infile(filename);
   if (!infile.is_open()) {
     throw std::runtime_error("File Not Found : " + filename);
@@ -116,7 +120,7 @@ void Engine::generateGrid() {
       }
     }
     if (direction == -1) {
-      throw std::runtime_error("No valid direction found should not happen on 5x5 grid");
+      spdlog::debug("No valid direction found should not happen on 5x5 grid");
       continue;
     }
 

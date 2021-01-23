@@ -1,20 +1,24 @@
 
 #include "engine.h"
+
+#include "spdlog/spdlog.h"
+#include "spdlog/cfg/env.h"
+
 #include <iostream>
 
 int main(int argc, char *argv[]) try {
 
-  using namespace vowels;
+  spdlog::cfg::load_env_levels();
 
-  Engine engine;
+  vowels::Engine engine(5);
 
   for (int i = 0; i < engine.getWordsToFindLength(); ++i) {
-    std::cout << "words: " << engine.getWord(i).word << std::endl;
+    spdlog::info("words: {}", engine.getWord(i).word);
   }
 
   engine.showGrid();
   return EXIT_SUCCESS;
 
 } catch (const std::exception &e) {
-  std::cerr << "Exception: " << e.what() << std::endl;
+  spdlog::error("{}", e.what());
 }

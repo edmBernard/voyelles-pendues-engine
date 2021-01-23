@@ -11,6 +11,7 @@ find_library(catch2 REQUIRED)
 find_path(CATCH_INCLUDE_DIR catch2/catch.hpp)
 include_directories(${CATCH_INCLUDE_DIR})
 
+find_package(spdlog CONFIG REQUIRED)
 
 #**************************************************************************************************
 # Include
@@ -48,7 +49,7 @@ LINK_DIRECTORIES(
 #**************************************************************************************************
 add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
 target_compile_options(devTool PRIVATE -O3)
-target_link_libraries(devTool -pthread -lstdc++fs)
+target_link_libraries(devTool -pthread -lstdc++fs spdlog::spdlog)
 
 #**************************************************************************************************
 # Test configuration
@@ -61,7 +62,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-engine.cpp
   )
   add_executable(unit_test ${TEST_SOURCES} ${SOURCES})
-  target_link_libraries(unit_test -pthread -lstdc++fs)
+  target_link_libraries(unit_test -pthread -lstdc++fs spdlog::spdlog)
   add_custom_target(tests
     COMMAND unit_test
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
