@@ -2,7 +2,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
+#include <random>
+#include <assert.h>
 
 namespace vowels {
 
@@ -13,7 +14,7 @@ std::tuple<std::string, std::string> removeVowels(std::string word) {
   std::string wordWildCard;
   for (char c : word) {
 
-    for (char consonnant : "bcdfghjklmpqrstvwxz") {
+    for (auto consonnant : u8"bcdfghjklmpqrstvwxz") {
       if (c == consonnant) {
         wordSqueezd += consonnant;
         wordWildCard += consonnant;
@@ -42,13 +43,30 @@ Engine::Engine(int gridSize, std::string filename) : m_gridSize(gridSize) {
     m_wordsListWithWildcard.push_back(wordWildCard);
   }
 
-  newPuzzle();
-};
+  generateGrid();
+}
 
-void Engine::newPuzzle() {
-  for (int i = 0; i < m_wordsList.size(); ++i) {
-    m_wordsToFind.push_back(i);
+void Engine::generateGrid() {
+  assert(m_wordsList.size() != 0);
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<uint64_t> distrib(0, m_wordsListSqueezed.size() - 1);
+
+  for (int n = 0; n < m_gridSize * m_gridSize; ++n) {
+    m_grid.push_back(m_wordsListSqueezed[distrib(gen)][0]);
   }
+}
+
+void Engine::showGrid() const {
+
+  for (int i = 0; i < m_gridSize; ++i) {
+    for (int j = 0; j < m_gridSize; ++j) {
+      std::cout << m_grid[i + j * m_gridSize] << " ";
+    }
+    std::cout << std::endl;
+  }
+
 }
 
 } // namespace vowels

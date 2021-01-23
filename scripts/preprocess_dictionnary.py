@@ -19,9 +19,9 @@ def main():
             if getLengthWithoutVowels(word) >= 3 and getLengthWithoutVowels(word) <= 5:
                 all_valid_words.append(word)
 
-    with open("valid_word_without_vowels.txt", "w") as outfile_without_vowels:
-        with open("valid_word_without_consonants.txt", "w") as outfile_without_consonant:
-            with open("valid_word.txt", "w") as outfile:
+    with open("valid_words_without_vowels.txt", "w") as outfile_without_vowels:
+        with open("valid_words_without_consonants.txt", "w") as outfile_without_consonant:
+            with open("valid_words.txt", "w") as outfile:
                 for word in all_valid_words:
                     outfile_without_vowels.write(strip_vowels(word) + "\n")
                     outfile_without_consonant.write(strip_consonant(word) + "\n")

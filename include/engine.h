@@ -15,7 +15,7 @@ std::tuple<std::string, std::string> removeVowels(std::string word);
 
 class Engine {
 public:
-  Engine(int gridSize = 5, std::string filename = "datas/valid_word.txt");
+  Engine(int gridSize = 5, std::string filename = "datas/valid_words.txt");
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
@@ -23,16 +23,16 @@ public:
   const std::string &getWordSqueezed(uint64_t index) const { return m_wordsListSqueezed[m_wordsToFind[index]]; }
   const std::string &getWordWildcard(uint64_t index) const { return m_wordsListWithWildcard[m_wordsToFind[index]]; }
 
-  void newPuzzle();
-  void createGrid();
-  const std::vector<std::string> &getGrid() const { return m_grid; };
+  void generateGrid();
+  const std::vector<char> &getGrid() const { return m_grid; };
+  void showGrid() const;
 
 private:
   std::vector<std::string> m_wordsList;             //!< List of all valid words used
   std::vector<std::string> m_wordsListSqueezed;     //!< List of all words without vowels
   std::vector<std::string> m_wordsListWithWildcard; //!< List of all words with vowels replaced by *
 
-  std::vector<std::string> m_grid;     //!< List of letter to form the keyboard grid
+  std::vector<char> m_grid;     //!< List of letter to form the keyboard grid
   int m_gridSize;                      //!< Size of the keyboard grid
   std::vector<uint64_t> m_wordsToFind; //!< List of index of the word to find in the grid
 };

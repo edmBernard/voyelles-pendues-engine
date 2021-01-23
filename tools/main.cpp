@@ -11,6 +11,8 @@ int main(int argc, char *argv[]) try {
   for (int i = 0; i < engine.getWordsToFindLength(); ++i) {
     std::cout << "words: " << engine.getWordComplete(i) << " " << engine.getWordSqueezed(i) << " " << engine.getWordWildcard(i) << std::endl;
   }
+
+  engine.showGrid();
   return EXIT_SUCCESS;
 
 } catch (const std::exception &e) {
