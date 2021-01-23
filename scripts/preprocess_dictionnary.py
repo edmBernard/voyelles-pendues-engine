@@ -1,7 +1,7 @@
 
 
 def getLengthWithoutVowels(word):
-    return sum([1 for letter in word if letter not in "aeiouy"])
+    return sum([1 for letter in word if letter in "bcdfghjklmnpqrstvwxz"])
 
 def strip_vowels(word):
     return "".join(letter for letter in word if letter in "bcdfghjklmnpqrstvwxz")
@@ -30,6 +30,7 @@ def main():
 
     print(len(all_valid_words))
     print(all_valid_words[0])
+
 
 if __name__ == "__main__":
     main()

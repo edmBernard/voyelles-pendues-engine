@@ -11,7 +11,15 @@ namespace details {
 
 std::tuple<std::string, std::string> removeVowels(std::string word);
 
-}
+bool isValidDirection(int direction, int i, int j, int gridSize);
+} // namespace details
+
+struct Word {
+  std::string word;
+  std::string squeezed;
+  std::string wildCard;
+  uint64_t appearance = 0;
+};
 
 class Engine {
 public:
@@ -19,22 +27,18 @@ public:
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
-  const std::string &getWordComplete(uint64_t index) const { return m_wordsList[m_wordsToFind[index]]; }
-  const std::string &getWordSqueezed(uint64_t index) const { return m_wordsListSqueezed[m_wordsToFind[index]]; }
-  const std::string &getWordWildcard(uint64_t index) const { return m_wordsListWithWildcard[m_wordsToFind[index]]; }
+  const Word &getWord(uint64_t index) const { return m_wordsToFind[index]; }
 
   void generateGrid();
   const std::vector<char> &getGrid() const { return m_grid; };
   void showGrid() const;
 
 private:
-  std::vector<std::string> m_wordsList;             //!< List of all valid words used
-  std::vector<std::string> m_wordsListSqueezed;     //!< List of all words without vowels
-  std::vector<std::string> m_wordsListWithWildcard; //!< List of all words with vowels replaced by *
+  std::vector<Word> m_wordsList; //!< List of all valid words used
 
-  std::vector<char> m_grid;     //!< List of letter to form the keyboard grid
   int m_gridSize;                      //!< Size of the keyboard grid
-  std::vector<uint64_t> m_wordsToFind; //!< List of index of the word to find in the grid
+  std::vector<char> m_grid;            //!< List of letter to form the keyboard grid
+  std::vector<Word> m_wordsToFind; //!< List of index of the word to find in the grid
 };
 
 } // namespace vowels

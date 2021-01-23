@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) try {
   Engine engine;
 
   for (int i = 0; i < engine.getWordsToFindLength(); ++i) {
-    std::cout << "words: " << engine.getWordComplete(i) << " " << engine.getWordSqueezed(i) << " " << engine.getWordWildcard(i) << std::endl;
+    std::cout << "words: " << engine.getWord(i).word << std::endl;
   }
 
   engine.showGrid();
