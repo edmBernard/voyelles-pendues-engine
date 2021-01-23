@@ -54,7 +54,9 @@ void Engine::generateGrid() {
   std::uniform_int_distribution<uint64_t> distrib(0, m_wordsListSqueezed.size() - 1);
 
   for (int n = 0; n < m_gridSize * m_gridSize; ++n) {
-    m_grid.push_back(m_wordsListSqueezed[distrib(gen)][0]);
+    const uint64_t index = distrib(gen);
+    m_grid.push_back(m_wordsListSqueezed[index][0]);
+    m_wordsToFind.push_back(index);
   }
 }
 
