@@ -16,7 +16,7 @@ TEST_CASE("Remove vowels", "[utils]") {
 
   auto [squeezed, wildcard] = vowels::details::removeVowels(testWord);
   CHECK(squeezed == expectedSqueezed);
-  CHECK(squeezed == expectedWildcard);
+  CHECK(wildcard == expectedWildcard);
 
 }
 
@@ -26,4 +26,14 @@ TEST_CASE("Grid generation", "[engine]") {
 
   engine.showGrid();
 
+}
+
+TEST_CASE("Search", "[engine]") {
+
+  Engine engine(5, "datas/valid_words.txt");
+
+  Word firstWord = engine.getWord(0);
+
+  CHECK(engine.search(firstWord.word) == vowels::SearchReturnCode::kWordInList);
+  CHECK(engine.search("WordNotInList") == vowels::SearchReturnCode::kWordDontExist);
 }
