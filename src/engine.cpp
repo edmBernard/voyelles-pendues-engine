@@ -12,6 +12,9 @@
 namespace vowels {
 
 constexpr char kWildcard = '*';
+constexpr uint8_t kMinWordLenght = 3;  // TODO: use this constraint
+constexpr uint8_t kMaxWordLenght = 5;  // TODO: use this constraint
+constexpr uint8_t kWordsPerPuzzle = 50;
 
 namespace details {
 
@@ -104,7 +107,6 @@ void Engine::generateGrid() {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::vector<int> directionSpace = {0, 1, 2, 3}; // +i -i +j -j
-  std::uniform_int_distribution<uint64_t> distrib(0, m_wordsList.size() - 1);
 
   for (int n = 0; n < m_gridSize * m_gridSize; ++n) {
     const int i = n % m_gridSize;
@@ -160,6 +162,73 @@ void Engine::generateGrid() {
     }
     m_wordsToFind.push_back(*foundWord);
   }
+}
+
+void Engine::generateWordList() {
+  assert(m_wordsList.size() != 0);
+  assert(m_grid.size() != 0);
+
+  // Loop on grid position
+  for (int n = 0; n < m_gridSize * m_gridSize; ++n) {
+    const int i = n % m_gridSize;
+    const int j = n / m_gridSize;
+
+
+    std::vector<int> directionSpace = {0, 1, 2, 3}; // +i -i +j -j
+    // Loop on direction
+    for (int direction : directionSpace) {
+      if (!details::isValidDirection(direction, i, j, m_gridSize)) {
+        continue;
+      }
+
+      auto wordListBegin = m_wordsList.begin();
+      while (true)
+      {
+        const int directionOffset = details::getDirectionOffset(direction, m_gridSize);
+        const int wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
+
+        // Create word consonnant from grid
+        std::vector<char> wordConstraint;
+        for (int t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
+          wordConstraint.push_back(m_grid[pos]);
+        }
+
+        auto constraint = [&](const Word &word) {
+          if (word.squeezed.size() > wordMaxSize) {
+            return false;
+          }
+
+          for (int u = 0; u < word.squeezed.size(); ++u) {
+            if (wordConstraint[u] != word.squeezed[u]) {
+              return false;
+            }
+          }
+          return true;
+        };
+
+        auto foundWord = std::find_if(wordListBegin, m_wordsList.end(), constraint);
+        if (foundWord == m_wordsList.end()) {
+          break;
+        }
+        m_wordsToFind.push_back(*foundWord);
+        wordListBegin = ++foundWord;
+      }
+    }
+  }
+}
+
+void Engine::reduceWordList() {
+  assert(m_wordsToFind.size() != 0);
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+  if (m_wordsToFind.size() < kWordsPerPuzzle) {
+    return;
+  }
+
+  std::shuffle(m_wordsToFind.begin(), m_wordsToFind.end(), gen);
+  m_wordsToFind.resize(kWordsPerPuzzle);
 }
 
 void Engine::showGrid() const {

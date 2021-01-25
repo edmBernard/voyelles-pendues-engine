@@ -30,6 +30,8 @@ public:
   const Word &getWord(uint64_t index) const { return m_wordsToFind[index]; }
 
   void generateGrid();
+  void generateWordList();
+  void reduceWordList();
   const std::vector<char> &getGrid() const { return m_grid; };
   void showGrid() const;
 
