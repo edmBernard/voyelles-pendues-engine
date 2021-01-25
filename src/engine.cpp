@@ -12,13 +12,13 @@
 namespace vowels {
 
 constexpr char kWildcard = '*';
-constexpr uint8_t kMinWordLenght = 3;  // TODO: use this constraint
-constexpr uint8_t kMaxWordLenght = 5;  // TODO: use this constraint
+constexpr uint8_t kMinWordLenght = 3; // TODO: use this constraint
+constexpr uint8_t kMaxWordLenght = 5; // TODO: use this constraint
 constexpr uint8_t kWordsPerPuzzle = 50;
 
 namespace details {
 
-std::tuple<std::string, std::string> removeVowels(std::string word) {
+std::tuple<std::string, std::string> removeVowels(std::string_view word) {
   std::string wordSqueezed;
   std::string wordWildCard;
   for (char c : word) {
@@ -98,10 +98,11 @@ Engine::Engine(int gridSize, std::string filename)
     m_wordsList.push_back({line, wordSqueezed, wordWildCard});
   }
 
-  generateGrid();
+  while (!generateGrid()) {
+  }
 }
 
-void Engine::generateGrid() {
+bool Engine::generateGrid() {
   assert(m_wordsList.size() != 0);
 
   std::random_device rd;
@@ -152,8 +153,9 @@ void Engine::generateGrid() {
       if (m_grid[n] != kWildcard) {
         continue;
       }
-      this->showGrid();
-      throw std::runtime_error("No valid word. I need to implement retry of the process");
+      spdlog::info("No valid word found.");
+      resetGrid();
+      return false;
     }
 
     // fill the grid with the word selected
@@ -162,6 +164,7 @@ void Engine::generateGrid() {
     }
     m_wordsToFind.push_back(*foundWord);
   }
+  return true;
 }
 
 void Engine::generateWordList() {
@@ -173,7 +176,6 @@ void Engine::generateWordList() {
     const int i = n % m_gridSize;
     const int j = n / m_gridSize;
 
-
     std::vector<int> directionSpace = {0, 1, 2, 3}; // +i -i +j -j
     // Loop on direction
     for (int direction : directionSpace) {
@@ -182,8 +184,7 @@ void Engine::generateWordList() {
       }
 
       auto wordListBegin = m_wordsList.begin();
-      while (true)
-      {
+      while (true) {
         const int directionOffset = details::getDirectionOffset(direction, m_gridSize);
         const int wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
 
@@ -231,6 +232,30 @@ void Engine::reduceWordList() {
   m_wordsToFind.resize(kWordsPerPuzzle);
 }
 
+SearchReturnCode Engine::search(std::string_view queryWord) {
+  {
+    // search in word to find
+    auto result = std::find_if(m_wordsToFind.begin(), m_wordsToFind.end(), [&](Word word) {
+      return word.word == queryWord;
+    });
+    if (result != m_wordsToFind.end()) {
+      return SearchReturnCode::kWordInList;
+    }
+  }
+
+  {
+    // search in word list
+    auto result = std::find_if(m_wordsList.begin(), m_wordsList.end(), [&](Word word) {
+      return word.word == queryWord;
+    });
+    if (result != m_wordsList.end()) {
+      return SearchReturnCode::kWordExist;
+    }
+  }
+
+  return SearchReturnCode::kWordDontExist;
+}
+
 void Engine::showGrid() const {
 
   for (int i = 0; i < m_gridSize; ++i) {
@@ -239,6 +264,10 @@ void Engine::showGrid() const {
     }
     std::cout << std::endl;
   }
+}
+
+void Engine::resetGrid() {
+  std::fill(m_grid.begin(), m_grid.end(), kWildcard);
 }
 
 } // namespace vowels

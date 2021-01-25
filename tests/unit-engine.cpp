@@ -8,21 +8,21 @@ namespace fs = std::filesystem;
 
 using namespace vowels;
 
-TEST_CASE("Engine Contructor", "[engine]") {
+TEST_CASE("Remove vowels", "[utils]") {
 
-  Engine engine(5, "tests/datas/test_valid_words.txt");
+  std::string testWord = "azertyuiopqsdfghjklmwxcvbnùéàât";
+  std::string expectedSqueezed = "zrtpqsdfghjklmwxcvbnt";
+  std::string expectedWildcard = "*z*rt****pqsdfghjklmwxcvbn****t";
 
-  CHECK(engine.getWordsToFindLength() == 25);
-  CHECK(engine.getWord(2).word == "abaissables");
-  CHECK(engine.getWord(2).squeezed == "bssbls");
-  CHECK(engine.getWord(2).wildCard == "*b**ss*bl*s");
+  auto [squeezed, wildcard] = vowels::details::removeVowels(testWord);
+  CHECK(squeezed == expectedSqueezed);
+  CHECK(squeezed == expectedWildcard);
+
 }
 
 TEST_CASE("Grid generation", "[engine]") {
 
   Engine engine(5, "datas/valid_words.txt");
-
-  engine.generateGrid();
 
   engine.showGrid();
 
