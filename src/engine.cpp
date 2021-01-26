@@ -21,9 +21,10 @@ namespace details {
 std::tuple<std::string, std::string> removeVowels(std::string_view word) {
   std::string wordSqueezed;
   std::string wordWildCard;
+
   for (char c : word) {
 
-    for (auto consonnant : "bcdfghjklmnpqrstvwxz") {
+    for (char consonnant : "bcdfghjklmnpqrstvwxz") {
       if (c == consonnant) {
         wordSqueezed += consonnant;
         wordWildCard += consonnant;

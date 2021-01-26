@@ -12,6 +12,7 @@ find_path(CATCH_INCLUDE_DIR catch2/catch.hpp)
 include_directories(${CATCH_INCLUDE_DIR})
 
 find_package(spdlog CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 
 #**************************************************************************************************
 # Include
@@ -32,7 +33,7 @@ set(SOURCES
 # Set compiler
 #**************************************************************************************************
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_compile_options(/std:c++latest /Oy)
+  add_compile_options(/std:c++latest /Oy /utf-8)
 else()
   add_compile_options(-std=c++2a -fPIC -O3 -fno-omit-frame-pointer)
 endif()
@@ -48,7 +49,9 @@ LINK_DIRECTORIES(
 # Make configuration
 #**************************************************************************************************
 add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
-target_link_libraries(devTool -pthread -lstdc++fs spdlog::spdlog)
+target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt)
+
+add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/utf8.cpp)
 
 #**************************************************************************************************
 # Test configuration
@@ -61,7 +64,7 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-engine.cpp
   )
   add_executable(unit_test ${TEST_SOURCES} ${SOURCES})
-  target_link_libraries(unit_test -pthread -lstdc++fs spdlog::spdlog)
+  target_link_libraries(unit_test -pthread -lstdc++fs spdlog::spdlog fmt::fmt)
   add_custom_target(tests
     COMMAND unit_test
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
