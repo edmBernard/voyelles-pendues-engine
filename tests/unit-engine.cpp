@@ -40,6 +40,9 @@ TEST_CASE("Search", "[engine]") {
 
   Word firstWord = engine.getWord(0);
 
+  uint64_t n = engine.getWordsToFindLength();
   CHECK(engine.search(firstWord.word) == vowels::SearchReturnCode::kWordInList);
+  CHECK(engine.getWordsToFindLength() == n-1);
   CHECK(engine.search("WordNotInList") == vowels::SearchReturnCode::kWordDontExist);
+  CHECK(engine.getWordsToFindLength() == n-1);
 }

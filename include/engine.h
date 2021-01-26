@@ -41,6 +41,7 @@ public:
   void generateWordList();
   void reduceWordList();
   const std::vector<char> &getGrid() const { return m_grid; };
+  uint64_t getGridSize() const { return m_gridSize; };
 
   SearchReturnCode search(std::string_view word);
 

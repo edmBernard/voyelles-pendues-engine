@@ -240,6 +240,7 @@ SearchReturnCode Engine::search(std::string_view queryWord) {
       return word.word == queryWord;
     });
     if (result != m_wordsToFind.end()) {
+      m_wordsToFind.erase(result);
       return SearchReturnCode::kWordInList;
     }
   }
