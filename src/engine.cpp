@@ -1,6 +1,7 @@
 #include "engine.h"
 
 #include <spdlog/spdlog.h>
+#include <utf8cpp/utf8.h>
 
 #include <algorithm>
 #include <assert.h>
@@ -22,10 +23,9 @@ std::tuple<std::string, std::string> removeVowels(std::string_view word) {
   std::string wordSqueezed;
   std::string wordWildCard;
 
-  for (char c : word) {
-
+  for (auto it_i = word.begin(); it_i != word.end(); utf8::next(it_i, word.end())) {
     for (char consonnant : "bcdfghjklmnpqrstvwxz") {
-      if (c == consonnant) {
+      if (*it_i == consonnant) {
         wordSqueezed += consonnant;
         wordWildCard += consonnant;
         break;

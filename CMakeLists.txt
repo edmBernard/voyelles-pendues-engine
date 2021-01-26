@@ -13,6 +13,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
+find_package(utf8cpp CONFIG REQUIRED)
 
 #**************************************************************************************************
 # Include
@@ -49,9 +50,9 @@ LINK_DIRECTORIES(
 # Make configuration
 #**************************************************************************************************
 add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
-target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt)
+target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt utf8cpp)
 
-add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/utf8.cpp)
+add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/main_utf8.cpp)
 
 #**************************************************************************************************
 # Test configuration

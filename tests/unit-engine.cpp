@@ -4,9 +4,12 @@
 #include <filesystem>
 #include <iostream>
 
+#include "utf8cpp/utf8.h"
+
 namespace fs = std::filesystem;
 
 using namespace vowels;
+
 
 TEST_CASE("Remove vowels", "[utils]") {
 
@@ -14,7 +17,10 @@ TEST_CASE("Remove vowels", "[utils]") {
   std::string expectedSqueezed = "zrtpqsdfghjklmwxcvbnt";
   std::string expectedWildcard = "*z*rt****pqsdfghjklmwxcvbn****t";
 
-  auto [squeezed, wildcard] = vowels::details::removeVowels(testWord);
+  uint64_t size = utf8::distance(testWord.begin(), testWord.end());
+  CHECK(size == expectedWildcard.size());
+
+  auto [squeezed, wildcard] = details::removeVowels(testWord);
   CHECK(squeezed == expectedSqueezed);
   CHECK(wildcard == expectedWildcard);
 
