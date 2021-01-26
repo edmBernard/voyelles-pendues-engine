@@ -15,7 +15,7 @@ namespace vowels {
 constexpr char kWildcard = '*';
 constexpr uint8_t kMinWordLenght = 3; // TODO: use this constraint
 constexpr uint8_t kMaxWordLenght = 5; // TODO: use this constraint
-constexpr uint8_t kWordsPerPuzzle = 50;
+constexpr uint8_t kWordsPerPuzzle = 3;
 
 namespace details {
 
@@ -86,7 +86,9 @@ int getMaxWordSize(int direction, int i, int j, int gridSize) {
 } // namespace details
 
 Engine::Engine(int gridSize, std::string filename)
-    : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard) {
+    : m_gridSize(gridSize)
+    , m_grid(m_gridSize * m_gridSize, kWildcard)
+    , m_bloomGrid(m_gridSize * m_gridSize, 0) {
 
   std::ifstream infile(filename);
   if (!infile.is_open()) {
@@ -155,7 +157,7 @@ bool Engine::generateGrid() {
         continue;
       }
       spdlog::info("No valid word found.");
-      resetGrid();
+      resetGrids();
       return false;
     }
 
@@ -184,6 +186,7 @@ void Engine::generateWordList() {
         continue;
       }
 
+      // Loop on wordList : find_if update iterator
       auto wordListBegin = m_wordsList.begin();
       while (true) {
         const int directionOffset = details::getDirectionOffset(direction, m_gridSize);
@@ -191,8 +194,10 @@ void Engine::generateWordList() {
 
         // Create word consonnant from grid
         std::vector<char> wordConstraint;
+        std::vector<int> letterPosition;
         for (int t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
           wordConstraint.push_back(m_grid[pos]);
+          letterPosition.push_back(pos);
         }
 
         auto constraint = [&](const Word &word) {
@@ -212,12 +217,24 @@ void Engine::generateWordList() {
         if (foundWord == m_wordsList.end()) {
           break;
         }
+
+        letterPosition.resize(foundWord->squeezed.size());  // letter position can be bigger than the find word
+        foundWord->letterPosition = letterPosition;
         m_wordsToFind.push_back(*foundWord);
         wordListBegin = ++foundWord;
       }
     }
   }
 }
+
+void Engine::generateBloomGrid() {
+  for (auto &w : m_wordsToFind) {
+    for (int pos : w.letterPosition) {
+      m_bloomGrid[pos] += 1;
+    }
+  }
+}
+
 
 void Engine::reduceWordList() {
   assert(m_wordsToFind.size() != 0);
@@ -240,6 +257,7 @@ SearchReturnCode Engine::search(std::string_view queryWord) {
       return word.word == queryWord;
     });
     if (result != m_wordsToFind.end()) {
+      removeFromBloom(*result);
       m_wordsToFind.erase(result);
       return SearchReturnCode::kWordInList;
     }
@@ -260,16 +278,36 @@ SearchReturnCode Engine::search(std::string_view queryWord) {
 
 void Engine::showGrid() const {
 
-  for (int i = 0; i < m_gridSize; ++i) {
-    for (int j = 0; j < m_gridSize; ++j) {
+  for (int j = 0; j < m_gridSize; ++j) {
+    for (int i = 0; i < m_gridSize; ++i) {
       std::cout << m_grid[i + j * m_gridSize] << " ";
     }
     std::cout << std::endl;
   }
 }
 
-void Engine::resetGrid() {
+void Engine::showBloomGrid() const {
+
+  for (int j = 0; j < m_gridSize; ++j) {
+    for (int i = 0; i < m_gridSize; ++i) {
+      std::cout << m_bloomGrid[i + j * m_gridSize] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+void Engine::resetGrids() {
   std::fill(m_grid.begin(), m_grid.end(), kWildcard);
+  std::fill(m_bloomGrid.begin(), m_bloomGrid.end(), 0);
+}
+
+void Engine::removeFromBloom(const Word& word) {
+  for (int i : word.letterPosition) {
+    m_bloomGrid[i] -= 1;
+    if (m_bloomGrid[i] < 0) {
+      throw std::runtime_error("Negative value in bloom grid. something goes wrong.");
+    }
+  }
 }
 
 } // namespace vowels

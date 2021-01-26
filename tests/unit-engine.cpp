@@ -30,15 +30,24 @@ TEST_CASE("Grid generation", "[engine]") {
 
   Engine engine(5, "datas/valid_words.txt");
 
+  engine.generateWordList();
+  engine.reduceWordList();
+  engine.generateBloomGrid();
+
   engine.showGrid();
+  engine.showBloomGrid();
 
 }
 
 TEST_CASE("Search", "[engine]") {
 
   Engine engine(5, "datas/valid_words.txt");
+  engine.generateWordList();
+  engine.reduceWordList();
+  engine.generateBloomGrid();
 
   Word firstWord = engine.getWord(0);
+  CHECK(firstWord.squeezed.size() == firstWord.letterPosition.size());
 
   uint64_t n = engine.getWordsToFindLength();
   CHECK(engine.search(firstWord.word) == vowels::SearchReturnCode::kWordInList);
