@@ -15,7 +15,7 @@ namespace vowels {
 constexpr char kWildcard = '*';
 constexpr uint8_t kMinWordLenght = 3; // TODO: use this constraint
 constexpr uint8_t kMaxWordLenght = 5; // TODO: use this constraint
-constexpr uint8_t kWordsPerPuzzle = 3;
+constexpr uint8_t kWordsPerPuzzle = 30;
 
 namespace details {
 
@@ -101,15 +101,29 @@ Engine::Engine(int gridSize, std::string filename)
     m_wordsList.push_back({line, wordSqueezed, wordWildCard});
   }
 
+  generateNewPuzzle();
+}
+
+void Engine::generateNewPuzzle() {
+  reset();
   while (!generateGrid()) {
   }
+  generateWordList();
+  reduceWordList();
+  generateBloomGrid();
 }
 
 bool Engine::generateGrid() {
+  spdlog::info("Generate Grid");
   assert(m_wordsList.size() != 0);
+
+  reset();
 
   std::random_device rd;
   std::mt19937 gen(rd());
+
+  std::shuffle(m_wordsList.begin(), m_wordsList.end(), gen);
+
   std::vector<int> directionSpace = {0, 1, 2, 3}; // +i -i +j -j
 
   for (int n = 0; n < m_gridSize * m_gridSize; ++n) {
@@ -157,20 +171,25 @@ bool Engine::generateGrid() {
         continue;
       }
       spdlog::info("No valid word found.");
-      resetGrids();
       return false;
     }
 
     // fill the grid with the word selected
+    std::vector<int> letterPosition;
     for (int t = 0, pos = n; t < foundWord->squeezed.size(); ++t, pos += directionOffset) {
       m_grid[pos] = foundWord->squeezed[t];
+      letterPosition.push_back(pos);
     }
+    foundWord->letterPosition = letterPosition;
     m_wordsToFind.push_back(*foundWord);
   }
+  m_wordsUsedToBuildGrid = m_wordsToFind.size();
+  spdlog::debug("{} : word to find {}", __FUNCTION__, m_wordsToFind.size());
   return true;
 }
 
 void Engine::generateWordList() {
+  spdlog::info("Generate words list");
   assert(m_wordsList.size() != 0);
   assert(m_grid.size() != 0);
 
@@ -228,6 +247,10 @@ void Engine::generateWordList() {
 }
 
 void Engine::generateBloomGrid() {
+  spdlog::info("Generate Bloom grid");
+  assert(m_wordsToFind.size() != 0);
+  std::fill(m_bloomGrid.begin(), m_bloomGrid.end(), 0);
+
   for (auto &w : m_wordsToFind) {
     for (int pos : w.letterPosition) {
       m_bloomGrid[pos] += 1;
@@ -237,6 +260,7 @@ void Engine::generateBloomGrid() {
 
 
 void Engine::reduceWordList() {
+  spdlog::info("Reduce words list");
   assert(m_wordsToFind.size() != 0);
 
   std::random_device rd;
@@ -246,7 +270,8 @@ void Engine::reduceWordList() {
     return;
   }
 
-  std::shuffle(m_wordsToFind.begin(), m_wordsToFind.end(), gen);
+  // We keep the head of the list unchanged they are words used to create the grid
+  std::shuffle(m_wordsToFind.begin() + m_wordsUsedToBuildGrid, m_wordsToFind.end(), gen);
   m_wordsToFind.resize(kWordsPerPuzzle);
 }
 
@@ -296,9 +321,10 @@ void Engine::showBloomGrid() const {
   }
 }
 
-void Engine::resetGrids() {
+void Engine::reset() {
   std::fill(m_grid.begin(), m_grid.end(), kWildcard);
   std::fill(m_bloomGrid.begin(), m_bloomGrid.end(), 0);
+  m_wordsToFind.clear();
 }
 
 void Engine::removeFromBloom(const Word& word) {

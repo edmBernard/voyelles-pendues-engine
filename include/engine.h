@@ -41,6 +41,10 @@ public:
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
+  void generateNewPuzzle();
+
+  [[nodiscard]] SearchReturnCode search(std::string_view word);
+
   const Word &getWord(uint64_t index) const { return m_wordsToFind[index]; }
 
   //! Generate grid from all word in dictionnary
@@ -58,13 +62,11 @@ public:
   const std::vector<char> &getGrid() const { return m_grid; };
   uint64_t getGridSize() const { return m_gridSize; };
 
-  SearchReturnCode search(std::string_view word);
-
   void showGrid() const;
   void showBloomGrid() const;
 
 private:
-  void resetGrids();
+  void reset();
 
   //! Remove word in the bloom grid
   void removeFromBloom(const Word &word);
@@ -73,8 +75,9 @@ private:
 
   int m_gridSize;                  //!< Size of the keyboard grid
   std::vector<char> m_grid;        //!< List of letter to form the keyboard grid
+  uint64_t m_wordsUsedToBuildGrid = 0; //!< Number of word used to create the grid
   std::vector<int> m_bloomGrid;    //!< Bloom filter like to keep track of used letter in grid
-  std::vector<Word> m_wordsToFind; //!< List of index of the word to find in the grid
+  std::vector<Word> m_wordsToFind; //!< List of words to find in the grid
 };
 
 } // namespace vowels
