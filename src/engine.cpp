@@ -27,11 +27,11 @@ std::tuple<std::string, std::string> removeVowels(std::string_view word) {
     for (char consonnant : "bcdfghjklmnpqrstvwxz") {
       if (*it_i == consonnant) {
         wordSqueezed += consonnant;
-        wordWildCard += consonnant;
+        wordWildCard += kWildcard;
         break;
       }
       if (consonnant == 'z') {
-        wordWildCard += kWildcard;
+        wordWildCard += *it_i;
       }
     }
   }
@@ -86,9 +86,7 @@ int getMaxWordSize(int direction, int i, int j, int gridSize) {
 } // namespace details
 
 Engine::Engine(int gridSize, std::string filename)
-    : m_gridSize(gridSize)
-    , m_grid(m_gridSize * m_gridSize, kWildcard)
-    , m_bloomGrid(m_gridSize * m_gridSize, 0) {
+    : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
 
   std::ifstream infile(filename);
   if (!infile.is_open()) {
@@ -156,6 +154,9 @@ bool Engine::generateGrid() {
       if (word.squeezed.size() > wordMaxSize) {
         return false;
       }
+      if (word.used) {
+        return false;
+      }
 
       for (int u = 0; u < word.squeezed.size(); ++u) {
         if (wordConstraint[u] != kWildcard && wordConstraint[u] != word.squeezed[u]) {
@@ -173,6 +174,7 @@ bool Engine::generateGrid() {
       spdlog::info("No valid word found.");
       return false;
     }
+    foundWord->used = true;
 
     // fill the grid with the word selected
     std::vector<int> letterPosition;
@@ -223,7 +225,9 @@ void Engine::generateWordList() {
           if (word.squeezed.size() > wordMaxSize) {
             return false;
           }
-
+          if (word.used) {
+            return false;
+          }
           for (int u = 0; u < word.squeezed.size(); ++u) {
             if (wordConstraint[u] != word.squeezed[u]) {
               return false;
@@ -237,7 +241,8 @@ void Engine::generateWordList() {
           break;
         }
 
-        letterPosition.resize(foundWord->squeezed.size());  // letter position can be bigger than the find word
+        foundWord->used = true;
+        letterPosition.resize(foundWord->squeezed.size()); // letter position can be bigger than the find word
         foundWord->letterPosition = letterPosition;
         m_wordsToFind.push_back(*foundWord);
         wordListBegin = ++foundWord;
@@ -257,7 +262,6 @@ void Engine::generateBloomGrid() {
     }
   }
 }
-
 
 void Engine::reduceWordList() {
   spdlog::info("Reduce words list");
@@ -322,12 +326,18 @@ void Engine::showBloomGrid() const {
 }
 
 void Engine::reset() {
+
+  for (auto &word : m_wordsList) {
+    word.used = false;
+    word.letterPosition.clear();
+  }
+
   std::fill(m_grid.begin(), m_grid.end(), kWildcard);
   std::fill(m_bloomGrid.begin(), m_bloomGrid.end(), 0);
   m_wordsToFind.clear();
 }
 
-void Engine::removeFromBloom(const Word& word) {
+void Engine::removeFromBloom(const Word &word) {
   for (int i : word.letterPosition) {
     m_bloomGrid[i] -= 1;
     if (m_bloomGrid[i] < 0) {

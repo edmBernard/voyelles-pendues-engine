@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) try {
 
   spdlog::info("List of word to find : ");
   for (int i = 0; i < engine.getWordsToFindLength(); ++i) {
-    spdlog::info(" - {}", engine.getWord(i).word);
+    spdlog::info(" - {:20}  -  {}", engine.getWord(i).wildCard, engine.getWord(i).word);
   }
 
   engine.showGrid();

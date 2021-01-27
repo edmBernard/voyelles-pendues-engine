@@ -27,7 +27,7 @@ struct Word {
   std::string squeezed;
   std::string wildCard;
   std::vector<int> letterPosition;
-  uint64_t appearance = 0;
+  bool used = 0;
 };
 
 // Usage :
@@ -73,11 +73,11 @@ private:
 
   std::vector<Word> m_wordsList; //!< List of all valid words used
 
-  int m_gridSize;                  //!< Size of the keyboard grid
-  std::vector<char> m_grid;        //!< List of letter to form the keyboard grid
+  int m_gridSize;                      //!< Size of the keyboard grid
+  std::vector<char> m_grid;            //!< List of letter to form the keyboard grid
   uint64_t m_wordsUsedToBuildGrid = 0; //!< Number of word used to create the grid
-  std::vector<int> m_bloomGrid;    //!< Bloom filter like to keep track of used letter in grid
-  std::vector<Word> m_wordsToFind; //!< List of words to find in the grid
+  std::vector<int> m_bloomGrid;        //!< Bloom filter like to keep track of used letter in grid
+  std::vector<Word> m_wordsToFind;     //!< List of words to find in the grid
 };
 
 } // namespace vowels
