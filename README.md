@@ -1,4 +1,6 @@
-# Voyelle Pendues Engine
+# Voyelles Pendues Engine
+
+This project [voyelles pendues engine](https://github.com/edmBernard/voyelles-pendues-engine) regroup the logic part for a game between hangman game and word search where letter are vowels have been remove from word.
 
 ## Dependencies
 
