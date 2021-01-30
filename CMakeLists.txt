@@ -45,18 +45,20 @@ LINK_DIRECTORIES(
 #**************************************************************************************************
 # Make configuration
 #**************************************************************************************************
-add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
-target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt utf8cpp)
-
-add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/main_utf8.cpp)
-
 add_library(vowels-engine STATIC ${SOURCES})
 target_link_libraries(vowels-engine spdlog::spdlog fmt::fmt utf8cpp)
+
+option(BUILD_EXEC "Build developper executable" OFF)
+  add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
+  target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt utf8cpp)
+
+  add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/main_utf8.cpp)
+}
 
 #**************************************************************************************************
 # Test configuration
 #**************************************************************************************************
-option(BUILD_UNIT_TESTS "Build the unit tests" ON)
+option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 if(BUILD_UNIT_TESTS)
 
   find_library(catch2 REQUIRED)

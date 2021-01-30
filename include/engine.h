@@ -38,6 +38,7 @@ struct Word {
 class Engine {
 public:
   Engine(int gridSize = 5, std::string filename = "datas/valid_words.txt");
+  Engine(int gridSize, const std::vector<std::string> &wordList);
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 

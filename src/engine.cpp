@@ -102,6 +102,17 @@ Engine::Engine(int gridSize, std::string filename)
   generateNewPuzzle();
 }
 
+Engine::Engine(int gridSize, const std::vector<std::string> &wordList)
+    : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
+
+  for (const std::string &line : wordList) {
+    auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
+    m_wordsList.push_back({line, wordSqueezed, wordWildCard});
+  }
+
+  generateNewPuzzle();
+}
+
 void Engine::generateNewPuzzle() {
   reset();
   while (!generateGrid()) {
