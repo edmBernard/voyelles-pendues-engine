@@ -7,10 +7,6 @@ cmake_minimum_required(VERSION 3.5)
 #**************************************************************************************************
 # Find Package
 #**************************************************************************************************
-find_library(catch2 REQUIRED)
-find_path(CATCH_INCLUDE_DIR catch2/catch.hpp)
-include_directories(${CATCH_INCLUDE_DIR})
-
 find_package(spdlog CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(utf8cpp CONFIG REQUIRED)
@@ -62,6 +58,11 @@ target_link_libraries(vowels-engine spdlog::spdlog fmt::fmt utf8cpp)
 #**************************************************************************************************
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
 if(BUILD_UNIT_TESTS)
+
+  find_library(catch2 REQUIRED)
+  find_path(CATCH_INCLUDE_DIR catch2/catch.hpp)
+  include_directories(${CATCH_INCLUDE_DIR})
+
   enable_testing()
   SET(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-main.cpp
