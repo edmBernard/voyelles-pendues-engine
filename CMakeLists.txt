@@ -49,11 +49,12 @@ add_library(vowels-engine STATIC ${SOURCES})
 target_link_libraries(vowels-engine spdlog::spdlog fmt::fmt utf8cpp)
 
 option(BUILD_EXEC "Build developper executable" OFF)
+if(BUILD_EXEC)
   add_executable(devTool ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/tools/main.cpp)
   target_link_libraries(devTool -lstdc++fs spdlog::spdlog fmt::fmt utf8cpp)
 
   add_executable(devUTF8 ${CMAKE_CURRENT_SOURCE_DIR}/tools/main_utf8.cpp)
-}
+endif()
 
 #**************************************************************************************************
 # Test configuration
