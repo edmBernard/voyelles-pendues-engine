@@ -26,7 +26,7 @@ struct Word {
   std::string word;
   std::string squeezed;
   std::string wildCard;
-  std::vector<int> letterPosition;
+  std::vector<uint64_t> letterPosition= {};
   bool used = 0;
 };
 

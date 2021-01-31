@@ -24,6 +24,7 @@ std::tuple<std::string, std::string> removeVowels(std::string_view word) {
   std::string wordWildCard;
 
   for (auto it_i = word.begin(); it_i != word.end(); utf8::next(it_i, word.end())) {
+    char32_t cp = utf8::peek_next(it_i, word.end());
     for (char consonnant : "bcdfghjklmnpqrstvwxz") {
       if (*it_i == consonnant) {
         wordSqueezed += consonnant;
@@ -31,7 +32,7 @@ std::tuple<std::string, std::string> removeVowels(std::string_view word) {
         break;
       }
       if (consonnant == 'z') {
-        wordWildCard += *it_i;
+        utf8::append(cp, wordWildCard);
       }
     }
   }
@@ -68,7 +69,7 @@ int getDirectionOffset(int direction, int gridSize) {
   }
 }
 
-int getMaxWordSize(int direction, int i, int j, int gridSize) {
+uint64_t getMaxWordSize(int direction, int i, int j, int gridSize) {
   switch (direction) {
   case 0: // +i
     return gridSize - i;
@@ -107,6 +108,10 @@ Engine::Engine(int gridSize, const std::vector<std::string> &wordList)
 
   for (const std::string &line : wordList) {
     auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
+    auto end_it = utf8::find_invalid(wordWildCard.begin(), wordWildCard.end());
+    if (end_it != wordWildCard.end()) {
+      throw std::runtime_error("Invalid UTF8 character in wordList");
+    }
     m_wordsList.push_back({line, wordSqueezed, wordWildCard});
   }
 
@@ -155,9 +160,9 @@ bool Engine::generateGrid() {
 
     // filter word list with constraint (letter already filled, size available)
     const int directionOffset = details::getDirectionOffset(direction, m_gridSize);
-    const int wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
+    const uint64_t wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
     std::vector<char> wordConstraint;
-    for (int t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
+    for (uint64_t t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
       wordConstraint.push_back(m_grid[pos]);
     }
 
@@ -169,7 +174,7 @@ bool Engine::generateGrid() {
         return false;
       }
 
-      for (int u = 0; u < word.squeezed.size(); ++u) {
+      for (uint64_t u = 0; u < word.squeezed.size(); ++u) {
         if (wordConstraint[u] != kWildcard && wordConstraint[u] != word.squeezed[u]) {
           return false;
         }
@@ -188,8 +193,8 @@ bool Engine::generateGrid() {
     foundWord->used = true;
 
     // fill the grid with the word selected
-    std::vector<int> letterPosition;
-    for (int t = 0, pos = n; t < foundWord->squeezed.size(); ++t, pos += directionOffset) {
+    std::vector<uint64_t> letterPosition;
+    for (uint64_t t = 0, pos = n; t < foundWord->squeezed.size(); ++t, pos += directionOffset) {
       m_grid[pos] = foundWord->squeezed[t];
       letterPosition.push_back(pos);
     }
@@ -222,12 +227,12 @@ void Engine::generateWordList() {
       auto wordListBegin = m_wordsList.begin();
       while (true) {
         const int directionOffset = details::getDirectionOffset(direction, m_gridSize);
-        const int wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
+        const uint64_t wordMaxSize = details::getMaxWordSize(direction, i, j, m_gridSize);
 
         // Create word consonnant from grid
         std::vector<char> wordConstraint;
-        std::vector<int> letterPosition;
-        for (int t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
+        std::vector<uint64_t> letterPosition;
+        for (uint64_t t = 0, pos = n; t < wordMaxSize; ++t, pos += directionOffset) {
           wordConstraint.push_back(m_grid[pos]);
           letterPosition.push_back(pos);
         }
@@ -239,7 +244,7 @@ void Engine::generateWordList() {
           if (word.used) {
             return false;
           }
-          for (int u = 0; u < word.squeezed.size(); ++u) {
+          for (uint64_t u = 0; u < word.squeezed.size(); ++u) {
             if (wordConstraint[u] != word.squeezed[u]) {
               return false;
             }
@@ -268,7 +273,7 @@ void Engine::generateBloomGrid() {
   std::fill(m_bloomGrid.begin(), m_bloomGrid.end(), 0);
 
   for (auto &w : m_wordsToFind) {
-    for (int pos : w.letterPosition) {
+    for (uint64_t pos : w.letterPosition) {
       m_bloomGrid[pos] += 1;
     }
   }
@@ -349,7 +354,7 @@ void Engine::reset() {
 }
 
 void Engine::removeFromBloom(const Word &word) {
-  for (int i : word.letterPosition) {
+  for (uint64_t i : word.letterPosition) {
     m_bloomGrid[i] -= 1;
     if (m_bloomGrid[i] < 0) {
       throw std::runtime_error("Negative value in bloom grid. something goes wrong.");
