@@ -61,6 +61,8 @@ public:
   void generateBloomGrid();
 
   const std::vector<char> &getGrid() const { return m_grid; };
+  const std::vector<int> &getBloom() const { return m_bloomGrid; };
+
   uint64_t getGridSize() const { return m_gridSize; };
 
   void showGrid() const;
