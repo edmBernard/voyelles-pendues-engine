@@ -13,8 +13,8 @@
 namespace vowels {
 
 constexpr char kWildcard = '*';
-constexpr uint8_t kMinWordLenght = 3; // TODO: use this constraint
-constexpr uint8_t kMaxWordLenght = 5; // TODO: use this constraint
+constexpr uint8_t kMinWordLength = 3;
+constexpr uint8_t kMaxWordLength = 5;
 constexpr uint8_t kWordsPerPuzzle = 30;
 
 namespace details {
@@ -97,7 +97,7 @@ Engine::Engine(int gridSize, std::string filename)
   std::string line;
   while (infile >> line) {
     auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
-    if (wordSqueezed.size() > 0) {
+    if (wordSqueezed.size() >= kMinWordLength && wordSqueezed.size() <= kMaxWordLength) {
       m_wordsList.push_back({line, wordSqueezed, wordWildCard});
     }
   }
@@ -114,7 +114,7 @@ Engine::Engine(int gridSize, const std::vector<std::string> &wordList)
     if (end_it != wordWildCard.end()) {
       throw std::runtime_error("Invalid UTF8 character in wordList");
     }
-    if (wordSqueezed.size() > 0) {
+    if (wordSqueezed.size() >= kMinWordLength && wordSqueezed.size() <= kMaxWordLength) {
       m_wordsList.push_back({line, wordSqueezed, wordWildCard});
     }
   }
