@@ -97,7 +97,9 @@ Engine::Engine(int gridSize, std::string filename)
   std::string line;
   while (infile >> line) {
     auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
-    m_wordsList.push_back({line, wordSqueezed, wordWildCard});
+    if (wordSqueezed.size() > 0) {
+      m_wordsList.push_back({line, wordSqueezed, wordWildCard});
+    }
   }
 
   generateNewPuzzle();
@@ -112,7 +114,9 @@ Engine::Engine(int gridSize, const std::vector<std::string> &wordList)
     if (end_it != wordWildCard.end()) {
       throw std::runtime_error("Invalid UTF8 character in wordList");
     }
-    m_wordsList.push_back({line, wordSqueezed, wordWildCard});
+    if (wordSqueezed.size() > 0) {
+      m_wordsList.push_back({line, wordSqueezed, wordWildCard});
+    }
   }
 
   generateNewPuzzle();
