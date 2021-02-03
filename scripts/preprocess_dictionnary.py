@@ -9,6 +9,10 @@ def strip_vowels(word):
 def strip_consonant(word):
     return "".join(letter if letter not in "bcdfghjklmnpqrstvwxz" else "*" for letter in word)
 
+def haveCapitalLetter(word):
+    return sum([1 for letter in word if letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]) != 0
+
+
 
 def main():
     with open("liste.de.mots.francais.frgut.txt", "r") as infile:
@@ -16,7 +20,7 @@ def main():
         for line in infile:
             word = line.rstrip()
 
-            if getLengthWithoutVowels(word) >= 3 and getLengthWithoutVowels(word) <= 5:
+            if getLengthWithoutVowels(word) >= 3 and getLengthWithoutVowels(word) <= 5 and not haveCapitalLetter(word):
                 all_valid_words.append(word)
 
     with open("valid_words_without_vowels.txt", "w") as outfile_without_vowels:
