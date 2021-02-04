@@ -37,8 +37,8 @@ struct Word {
 // engine.generateBloomGrid();
 class Engine {
 public:
-  Engine(int gridSize = 5, std::string filename = "datas/valid_words.txt");
-  Engine(int gridSize, const std::vector<std::string> &wordList);
+  Engine(int gridSize = 5, int wordsPerPuzzle = 50, std::string filename = "datas/valid_words.txt");
+  Engine(int gridSize, int wordsPerPuzzle, const std::vector<std::string> &wordList);
 
   uint64_t getWordsToFindLength() const { return m_wordsToFind.size(); };
 
@@ -77,6 +77,7 @@ private:
   std::vector<Word> m_wordsList; //!< List of all valid words used
 
   int m_gridSize;                      //!< Size of the keyboard grid
+  int m_wordsPerPuzzle;                //!< Maximum Number of word to find
   std::vector<char> m_grid;            //!< List of letter to form the keyboard grid
   uint64_t m_wordsUsedToBuildGrid = 0; //!< Number of word used to create the grid
   std::vector<int> m_bloomGrid;        //!< Bloom filter like to keep track of used letter in grid

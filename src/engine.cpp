@@ -1,5 +1,8 @@
 #include "engine.h"
 
+// On windows mvcc don't define correctly __cplusplus
+#define UTF_CPP_CPLUSPLUS 201103L
+
 #include <spdlog/spdlog.h>
 #include <utf8cpp/utf8.h>
 
@@ -15,7 +18,6 @@ namespace vowels {
 constexpr char kWildcard = '*';
 constexpr uint8_t kMinWordLength = 3;
 constexpr uint8_t kMaxWordLength = 5;
-constexpr uint8_t kWordsPerPuzzle = 30;
 
 namespace details {
 
@@ -86,8 +88,8 @@ uint64_t getMaxWordSize(int direction, int i, int j, int gridSize) {
 
 } // namespace details
 
-Engine::Engine(int gridSize, std::string filename)
-    : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
+Engine::Engine(int gridSize, int wordsPerPuzzle, std::string filename)
+    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
 
   std::ifstream infile(filename);
   if (!infile.is_open()) {
@@ -105,8 +107,8 @@ Engine::Engine(int gridSize, std::string filename)
   generateNewPuzzle();
 }
 
-Engine::Engine(int gridSize, const std::vector<std::string> &wordList)
-    : m_gridSize(gridSize), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
+Engine::Engine(int gridSize, int wordsPerPuzzle, const std::vector<std::string> &wordList)
+    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
 
   for (const std::string &line : wordList) {
     auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
@@ -290,13 +292,13 @@ void Engine::reduceWordList() {
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  if (m_wordsToFind.size() < kWordsPerPuzzle) {
+  if (m_wordsToFind.size() < m_wordsPerPuzzle) {
     return;
   }
 
   // We keep the head of the list unchanged they are words used to create the grid
   std::shuffle(m_wordsToFind.begin() + m_wordsUsedToBuildGrid, m_wordsToFind.end(), gen);
-  m_wordsToFind.resize(kWordsPerPuzzle);
+  m_wordsToFind.resize(m_wordsPerPuzzle);
 }
 
 SearchReturnCode Engine::search(std::string_view queryWord) {
