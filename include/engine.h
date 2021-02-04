@@ -55,6 +55,7 @@ public:
   void generateWordList();
 
   //! Reduce word list to avoid to have to many word in the grid
+  //! Warning: this method shuffle the word list
   void reduceWordList();
 
   //! Generate bloom filter with the word to find

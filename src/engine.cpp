@@ -299,6 +299,7 @@ void Engine::reduceWordList() {
   // We keep the head of the list unchanged they are words used to create the grid
   std::shuffle(m_wordsToFind.begin() + m_wordsUsedToBuildGrid, m_wordsToFind.end(), gen);
   m_wordsToFind.resize(m_wordsPerPuzzle);
+  std::shuffle(m_wordsToFind.begin(), m_wordsToFind.end(), gen);
 }
 
 SearchReturnCode Engine::search(std::string_view queryWord) {

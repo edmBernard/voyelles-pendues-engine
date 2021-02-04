@@ -15,26 +15,25 @@ def haveCapitalLetter(word):
 
 
 def main():
+    hist = [0 for i in range(20)]
     with open("liste.de.mots.francais.frgut.txt", "r") as infile:
         all_valid_words = []
         for line in infile:
             word = line.rstrip()
 
-            if getLengthWithoutVowels(word) >= 3 and getLengthWithoutVowels(word) <= 5 and not haveCapitalLetter(word):
+            length = getLengthWithoutVowels(word)
+            hist[length] += 1
+            if length >= 3 and length <= 5 and not haveCapitalLetter(word):
                 all_valid_words.append(word)
 
-    with open("valid_words_without_vowels.txt", "w") as outfile_without_vowels:
-        with open("valid_words_without_consonants.txt", "w") as outfile_without_consonant:
-            with open("valid_words.txt", "w") as outfile:
-                for word in all_valid_words:
-                    outfile_without_vowels.write(strip_vowels(word) + "\n")
-                    outfile_without_consonant.write(strip_consonant(word) + "\n")
-                    outfile.write(word + "\n")
+    with open("valid_words.txt", "w") as outfile:
+        for word in all_valid_words:
+            outfile.write(word + "\n")
 
 
     print(len(all_valid_words))
     print(all_valid_words[0])
-
+    print(hist)
 
 if __name__ == "__main__":
     main()
