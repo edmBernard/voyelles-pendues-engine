@@ -89,7 +89,7 @@ uint64_t getMaxWordSize(int direction, int i, int j, int gridSize) {
 } // namespace details
 
 Engine::Engine(int gridSize, int wordsPerPuzzle, std::string filename)
-    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
+    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(gridSize * gridSize, kWildcard), m_bloomGrid(gridSize * gridSize, 0) {
 
   std::ifstream infile(filename);
   if (!infile.is_open()) {
@@ -108,7 +108,7 @@ Engine::Engine(int gridSize, int wordsPerPuzzle, std::string filename)
 }
 
 Engine::Engine(int gridSize, int wordsPerPuzzle, const std::vector<std::string> &wordList)
-    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(m_gridSize * m_gridSize, kWildcard), m_bloomGrid(m_gridSize * m_gridSize, 0) {
+    : m_gridSize(gridSize), m_wordsPerPuzzle(wordsPerPuzzle), m_grid(gridSize * gridSize, kWildcard), m_bloomGrid(gridSize * gridSize, 0) {
 
   for (const std::string &line : wordList) {
     auto [wordSqueezed, wordWildCard] = details::removeVowels(line);
