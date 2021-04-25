@@ -30,11 +30,7 @@ struct Word {
   bool used = 0;
 };
 
-// Usage :
-// engine.generateGrid();
-// engine.generateWordList();
-// engine.reduceWordList();
-// engine.generateBloomGrid();
+
 class Engine {
 public:
   Engine(int gridSize = 5, int wordsPerPuzzle = 50, std::string filename = "datas/valid_words.txt");
