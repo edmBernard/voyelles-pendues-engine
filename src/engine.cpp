@@ -131,6 +131,8 @@ void Engine::generateNewPuzzle() {
   generateWordList();
   reduceWordList();
   generateBloomGrid();
+  for (auto &word : m_wordsToFind)
+    spdlog::debug("word to find: {}", word.word);
 }
 
 bool Engine::generateGrid() {
